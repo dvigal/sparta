@@ -7,3 +7,7 @@
 *.log
 *.conf
 *.orig
+.kde4v
+sparta.kdev4
+kdev_include_paths
+run.sh
