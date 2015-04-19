@@ -1,14 +1,30 @@
 #ifndef H_SCREEN
 #define H_SCREEN
 
-#define ROWS 25
-#define COLS 80
-#define WHITE 0xff
-#define BLACK 0x00
-#define VIDEO_ADDRESS 0xb8000
+#include "video.h"
+#include "types.h"
 
-void screen_clear_bw();
+struct vscreen {
+  uint32_t x;
+  uint32_t y;
+  uint8_t buffer[WIDTH * HEIGHT];
+  uint16_t cursor;
+  uint8_t background_color;
+  uint8_t text_color;
+  bool active;
+};
+typedef struct vscreen vscreen_t;
 
-void screen_clear(unsigned char backcolor, unsigned char forecolor);
+vscreen_t *get_current_vscreen();
+vscreen_t *init_vscreen();
+vscreen_t *create_vscreen();
+vscreen_t *set_current_vscreen(vscreen_t *current_vscreen);
+vscreen_t *next_vscreen();
+vscreen_t *previous_vscreen();
+
+void print_text(vscreen_t *vscreen, string text);
+
+void clear_vscreen(vscreen_t *vscreen);
+void load_vscreen(vscreen_t *vscreen);
 
 #endif

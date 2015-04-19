@@ -45,6 +45,7 @@ bootloader:
 
 clean:	
 	rm -fr $(C_SOURCES_DIR)/*.o
+	rm -fr $(KERNEL)
 	rm -fr $(BOOTLOADER)
 	rm -fr $(IMAGE)
 	

@@ -18,4 +18,9 @@ extern void init_timer(unsigned int hz);
 
 typedef void (*irq_handler_t) (regs_t *);
 
+
+#define NULL(type) (type*)0
+
+//char HEX_SYMBOL_TABLES[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
 #endif

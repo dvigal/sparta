@@ -1,32 +1,23 @@
 #include "screen.h"
+#include "mm.h"
+#include "convert.h"
+#include "video.h"
 
-unsigned short* vga() {
-  return (unsigned short*) VIDEO_ADDRESS;
-}
-
-
-void init_kernel() {
+void init_kernel() 
+{
   init_gdt();
   init_idt();
   init_isrs();
   init_irq();
+  init_paging();
 }
 
 
 void main()
 {   
-    screen_clear_bw();
-   
-    char* messageWelcome = "Congratulation!";
-    int x = 5;
-    while(*messageWelcome != 0) {
-      unsigned short* video = vga();
-      video += ((0 * COLS) + x);
-      *video = (((BLACK << 4) | (WHITE & 0x0f)) << 8) | *messageWelcome;
-      messageWelcome++;
-      x++;
-    }
+    clear();
     init_kernel();
+    vscreen_t *vscreen = init_vscreen();
     asm("sti");
     for (;;);
 }

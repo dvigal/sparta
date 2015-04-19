@@ -10,6 +10,14 @@ isr0:
   push byte 0
   push byte 0
   jmp isr_common
+  
+[global isr14]
+isr14:
+  cli
+  push byte 0
+  push byte 0
+  jmp isr_common  
+  
 [global irq0]
 irq0:
   cli
