@@ -3,6 +3,7 @@
 #include "memory.h"
 #include "timer.h"
 #include "screen.h"
+#include "port.h"
 
 static irq_handler_t irq_handlers[IRQ_HANDLER_TABLE_SIZE] = {0,0,0,0,
 					      0,0,0,0,
@@ -37,19 +38,6 @@ void set_irq_handler(unsigned int num, irq_handler_t handler) {
 }
 
 void irq_handler(regs_t *reg) {
-  /*
-  if (reg->vector > 48 || reg->vector < 32) {
-    char* messageWelcome = "Oops!";
-    int x = 5;
-    while(*messageWelcome != 0) {
-	  unsigned short* video = (unsigned short*) VIDEO_ADDRESS;
-	  video += ((0 * COLS) + x);
-	  *video = (((BLACK << 4) | (WHITE & 0x0f)) << 8) | *messageWelcome;
-	  messageWelcome++;
-	  x++;
-    }
-  }
-  */
   int num = reg->vector - 32;
   if (num >= 0 && num < IRQ_HANDLER_TABLE_SIZE) {  
     irq_handler_t handler = irq_handlers[num];

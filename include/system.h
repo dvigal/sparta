@@ -1,12 +1,10 @@
 #ifndef H_SYSTEM
 #define H_SYSTEM
 
+#include "types.h"
+
 struct regs_struct {
-	unsigned int edi, esi, ebp, esp;
-	unsigned int ebx, edx, ecx, eax;
-	unsigned int gs, fs, es, ds;
-	unsigned int vector, err_code;
-	unsigned int eip, cs, eflags, useresp, ss;
+  uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax, vector, err_code, eip, cs, eflags, usersp, ss;
 }__attribute__((packed));
 typedef struct regs_struct regs_t;
 
@@ -18,9 +16,6 @@ extern void init_timer(unsigned int hz);
 
 typedef void (*irq_handler_t) (regs_t *);
 
-
 #define NULL(type) (type*)0
-
-//char HEX_SYMBOL_TABLES[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 #endif

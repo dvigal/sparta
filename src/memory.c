@@ -1,28 +1,22 @@
 #include "memory.h"
 
 
-void *memset(void *dest, unsigned char value, int count) {
-  char *end_addr = dest + count;
-  char *tmp = (char *)dest;
+void *memset(void *dest, uint8_t value, uint64_t size) 
+{
+  uint8_t *end_addr = dest + size;
+  uint8_t *tmp = (char *)dest;
   while(tmp < end_addr) {
     *tmp = value;
     tmp++;
   }
 }
 
-/*
-
-void* memcpy( void* d, const void* s, unsigned int n ) {
-    char* dest;
-    char* src;
-
-    dest = ( char* )d;
-    src = ( char* )s;
-
-    while ( n-- ) {
+void *memcpy(void* destination, const void* source, uint64_t size)
+{
+    uint8_t *dest = (uint8_t*) destination;
+    uint8_t *src = (uint8_t*) source;
+    while (size--) {
         *dest++ = *src++;
     }
-
-    return d;
+    return destination;
 }
-*/

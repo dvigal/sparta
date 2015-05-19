@@ -16,15 +16,21 @@ struct vscreen {
 typedef struct vscreen vscreen_t;
 
 vscreen_t *get_current_vscreen();
+
 vscreen_t *init_vscreen();
+
 vscreen_t *create_vscreen();
+
 vscreen_t *set_current_vscreen(vscreen_t *current_vscreen);
+
 vscreen_t *next_vscreen();
+
 vscreen_t *previous_vscreen();
 
 void print_text(vscreen_t *vscreen, string text);
 
 void clear_vscreen(vscreen_t *vscreen);
+
 void load_vscreen(vscreen_t *vscreen);
 
 #endif

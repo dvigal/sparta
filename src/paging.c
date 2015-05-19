@@ -1,33 +1,60 @@
-#include "mm.h"
-
-page_directory_t *kernel_directory=0;
-
-
-page_directory_t *current_directory=0;
-
-uint32_t *frames;
-uint32_t nframes;
-
-uint32_t placement_address = 0x1000 + 0x1000000;
+#include "paging.h"
 
 #define INDEX_FROM_BIT(a) (a/(8*4))
 #define OFFSET_FROM_BIT(a) (a%(8*4))
 
-static void set_frame(uint32_t frame_addr) {
+
+static uint32_t pagedir[1024];
+static uint32_t pagetable[1024];
+
+page_directory_t *kernel_directory = 0;
+page_directory_t *current_directory = 0;
+uint32_t placement_address = 0x1000 + 0x1000000;
+uint32_t *frames;
+uint32_t nframes;
+
+uint32_t get_kernel_phys_address() 
+{
+    extern uint8_t _kernel_phys_address_start;
+    return (uint32_t)(&_kernel_phys_address_start);
+}
+
+uint32_t get_kernel_phys_address_end() 
+{
+    extern uint8_t end;
+    return (uint32_t)(&end);
+}
+
+uint32_t get_kernel_length()
+{
+    extern uint8_t _kernel_length;
+    return (uint32_t)(&_kernel_length);
+}
+
+
+uint32_t vir2phys(void *vir) 
+{
+    return (uint32_t) vir;
+}
+
+static void set_frame(uint32_t frame_addr)
+{
   uint32_t frame = frame_addr/0x1000;
   uint32_t idx = INDEX_FROM_BIT(frame);
   uint32_t off = OFFSET_FROM_BIT(frame);
   frames[idx] |= (0x1 << off);
 }
 
-static void clear_frame(uint32_t frame_addr) {
+static void clear_frame(uint32_t frame_addr)
+{
   uint32_t frame = frame_addr/0x1000;
   uint32_t idx = INDEX_FROM_BIT(frame);
   uint32_t off = OFFSET_FROM_BIT(frame);
   frames[idx] &= ~(0x1 << off);
 }
 
-static uint32_t first_frame() {
+static uint32_t first_frame()
+{
   uint32_t i, j;
   for (i = 0; i < INDEX_FROM_BIT(nframes); i++) {
     if (frames[i] != 0xFFFFFFFF) {
@@ -41,11 +68,13 @@ static uint32_t first_frame() {
   }
 }
 
-static uint32_t is_page_alignment(int align) {
+static uint32_t is_page_alignment(int align)
+{
   return align == 1 && (placement_address & 0xFFFFF000);
 }
 
-void alloc_frame(page_t *page, int is_kernel, int is_writeable) {
+void alloc_frame(page_t *page, int is_kernel, int is_writeable)
+{
   if (page->frame != 0) {
     return;
   }
@@ -60,7 +89,8 @@ void alloc_frame(page_t *page, int is_kernel, int is_writeable) {
   page->frame = idx;
 }
 
-void free_frame(page_t *page) {
+void free_frame(page_t *page)
+{
   uint32_t frame;
   if (!(frame=page->frame)) {
     return;
@@ -69,13 +99,15 @@ void free_frame(page_t *page) {
   page->frame = 0x0;
 }
 
-uint32_t kmalloc(uint32_t size) {
+uint32_t kmalloc(uint32_t size)
+{
   uint32_t tmp = placement_address;
   placement_address += size;
   return tmp;
 }
 
-uint32_t kmalloc_a(uint32_t size, int align) {
+uint32_t kmalloc_a(uint32_t size, int align)
+{
   if (align == 1 && (placement_address & 0xFFFFF000)) {
     placement_address &= 0xFFFFF000;
     placement_address += 0x1000;
@@ -85,7 +117,8 @@ uint32_t kmalloc_a(uint32_t size, int align) {
   return tmp;
 }
 
-uint32_t kmalloc_ap(uint32_t size, int align, uint32_t *phys) {
+uint32_t kmalloc_ap(uint32_t size, int align, uint32_t *phys)
+{
   if (align == 1 && (placement_address & 0xFFFFF000)) {
     placement_address &= 0xFFFFF000;
     placement_address += 0x1000;
@@ -98,7 +131,8 @@ uint32_t kmalloc_ap(uint32_t size, int align, uint32_t *phys) {
   return tmp;
 }
 
-page_t *get_page(uint32_t address, int make, page_directory_t *dir) {
+page_t *get_page(uint32_t address, int make, page_directory_t *dir)
+{
   address /= 0x1000;
   uint32_t table_idx = address / 1024;
   if (dir->tables[table_idx]) {
@@ -116,7 +150,8 @@ page_t *get_page(uint32_t address, int make, page_directory_t *dir) {
   }
 }
 
-void init_paging() {
+void init_paging()
+{
   uint32_t mem_end_page = 0x1000000;
   nframes = mem_end_page / 0x1000;
   frames = (uint32_t*)kmalloc(INDEX_FROM_BIT(nframes));
@@ -127,10 +162,11 @@ void init_paging() {
     alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
     i += 0x1000;
   }
-  change_page_directory(kernel_directory);
+  load_page_directory(kernel_directory);
 }
 
-void change_page_directory(page_directory_t *newpd) {
+void load_page_directory(page_directory_t *newpd)
+{
   current_directory = newpd;
   asm volatile("mov %0, %%cr3":: "r"(&newpd->tablesPhysical));
   uint32_t cr0;
