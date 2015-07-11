@@ -1,12 +1,9 @@
 ENTRY(start)
     
-    _kernel_phys_address_start = 4M; 
-    _kernel_vir_address_start = _kernel_phys_address_start;
-    _kernel_phys_address_end = 40M;
-    _kernel_length = _kernel_phys_address_end - _kernel_phys_address_start;
-
+    kernel_phys_address_start = 4M;
+    kernel_phys_address_end   = end;
 SECTIONS
-{   . = _kernel_phys_address_start;
+{   . = kernel_phys_address_start;
     .text ALIGN(4K) :
     {
         code = .; _code = .; __code = .;

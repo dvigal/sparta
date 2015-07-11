@@ -1,5 +1,6 @@
 #include "video.h"
 #include "port.h"
+#include "system.h"
 
 /*
 16 bit
@@ -37,12 +38,17 @@ void write_char(uint8_t c)
   current_x++;
 }
 
-void write_text(string text)
+void write_text2a(string text, uint32_t length)
 {
   uint32_t i = 0;
-  while (text[i]) {
+  while ((i < length || length == -1) && text[i]) {
     write_char(text[i++]);
   }
+}
+
+void write_text(string text)
+{
+    write_text2a(text, -1);
 }
 
 void clear() 

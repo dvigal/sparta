@@ -10,9 +10,13 @@ typedef long long int64_t;
 
 typedef const char* string;
 
+typedef uint32_t size_t;
+
 typedef enum { 
   false = 0,
   true = 1
 } bool;
+
+#define NONE (void*)0
 
 #endif

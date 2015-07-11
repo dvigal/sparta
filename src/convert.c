@@ -1,6 +1,7 @@
 #include "convert.h"
 #include "types.h"
 #include "assert.h"
+#include "memory.h"
 
 const static uint8_t digits[] = {
         '0' , '1' , '2' , '3' , '4' , '5' ,

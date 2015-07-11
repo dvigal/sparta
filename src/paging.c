@@ -1,176 +1,84 @@
 #include "paging.h"
 
-#define INDEX_FROM_BIT(a) (a/(8*4))
-#define OFFSET_FROM_BIT(a) (a%(8*4))
-
-
-static uint32_t pagedir[1024];
-static uint32_t pagetable[1024];
-
 page_directory_t *kernel_directory = 0;
 page_directory_t *current_directory = 0;
-uint32_t placement_address = 0x1000 + 0x1000000;
-uint32_t *frames;
-uint32_t nframes;
 
-uint32_t get_kernel_phys_address() 
+page_t *get_page(virt_addr_t vaddr, page_directory_t *dir)
 {
-    extern uint8_t _kernel_phys_address_start;
-    return (uint32_t)(&_kernel_phys_address_start);
-}
-
-uint32_t get_kernel_phys_address_end() 
-{
-    extern uint8_t end;
-    return (uint32_t)(&end);
-}
-
-uint32_t get_kernel_length()
-{
-    extern uint8_t _kernel_length;
-    return (uint32_t)(&_kernel_length);
-}
-
-
-uint32_t vir2phys(void *vir) 
-{
-    return (uint32_t) vir;
-}
-
-static void set_frame(uint32_t frame_addr)
-{
-  uint32_t frame = frame_addr/0x1000;
-  uint32_t idx = INDEX_FROM_BIT(frame);
-  uint32_t off = OFFSET_FROM_BIT(frame);
-  frames[idx] |= (0x1 << off);
-}
-
-static void clear_frame(uint32_t frame_addr)
-{
-  uint32_t frame = frame_addr/0x1000;
-  uint32_t idx = INDEX_FROM_BIT(frame);
-  uint32_t off = OFFSET_FROM_BIT(frame);
-  frames[idx] &= ~(0x1 << off);
-}
-
-static uint32_t first_frame()
-{
-  uint32_t i, j;
-  for (i = 0; i < INDEX_FROM_BIT(nframes); i++) {
-    if (frames[i] != 0xFFFFFFFF) {
-      for (j = 0; j < 32; j++) {
-	uint32_t toTest = 0x1 << j;
-	if (!(frames[i]&toTest)) {
-	  return i*4*8+j;
-	}
-      }
-    }
-  }
-}
-
-static uint32_t is_page_alignment(int align)
-{
-  return align == 1 && (placement_address & 0xFFFFF000);
-}
-
-void alloc_frame(page_t *page, int is_kernel, int is_writeable)
-{
-  if (page->frame != 0) {
-    return;
-  }
-  uint32_t idx = first_frame();
-  if (idx == (uint32_t)-1) {
+    uint32_t table_idx = TABLE_INDEX(vaddr);
+    uint32_t page_idx = PAGE_INDEX(vaddr);
+#ifdef DEBUG
+    assert(table_idx >= 0, __LINE__, __FILE__);
+    assert(page_idx >= 0, __LINE__, __FILE__);
+#endif DEBUG
     
-  }
-  set_frame(idx*0x1000);
-  page->present = 1;
-  page->rw = (is_writeable)?1:0;
-  page->user = (is_kernel)?0:1;
-  page->frame = idx;
-}
-
-void free_frame(page_t *page)
-{
-  uint32_t frame;
-  if (!(frame=page->frame)) {
-    return;
-  }
-  clear_frame(frame);
-  page->frame = 0x0;
-}
-
-uint32_t kmalloc(uint32_t size)
-{
-  uint32_t tmp = placement_address;
-  placement_address += size;
-  return tmp;
-}
-
-uint32_t kmalloc_a(uint32_t size, int align)
-{
-  if (align == 1 && (placement_address & 0xFFFFF000)) {
-    placement_address &= 0xFFFFF000;
-    placement_address += 0x1000;
-  }
-  uint32_t tmp =  placement_address;
-  placement_address += size;
-  return tmp;
-}
-
-uint32_t kmalloc_ap(uint32_t size, int align, uint32_t *phys)
-{
-  if (align == 1 && (placement_address & 0xFFFFF000)) {
-    placement_address &= 0xFFFFF000;
-    placement_address += 0x1000;
-  }
-  if (phys) {
-    *phys = placement_address;
-  }
-  uint32_t tmp = placement_address;
-  placement_address += size;
-  return tmp;
-}
-
-page_t *get_page(uint32_t address, int make, page_directory_t *dir)
-{
-  address /= 0x1000;
-  uint32_t table_idx = address / 1024;
-  if (dir->tables[table_idx]) {
-    return &dir->tables[table_idx]->pages[address%1024];
-  }
-  else 
-  if (make) {
-    uint32_t tmp;
-    dir->tables[table_idx] = (page_table_t*)kmalloc_ap(sizeof(page_table_t), 1, &tmp);
-    dir->tablesPhysical[table_idx] = tmp | 0x7;
-    return &dir->tables[table_idx]->pages[address%1024];
-  }
-  else {
+    if (dir->table[table_idx]) {
+        return &dir->table[table_idx]->page[page_idx];
+    } else {
+        phys_addr_t page_table_addr = kmalloc_base(sizeof(page_table_t), true);
+#ifdef DEBUG
+    kprintf("Page Table Address: 0x%h\n", page_table_addr);
+#endif
+        dir->table[table_idx] = (page_table_t*) page_table_addr;
+        dir->tbaddress[table_idx] = page_table_addr | PAGE_PRESENT_RW_USER;
+        return &dir->table[table_idx]->page[page_idx];
+    }
     return 0;
-  }
 }
 
-void init_paging()
+void pg_mapkernel(virt_addr_t *vaddr, phys_addr_t *paddr, page_directory_t *kernel_directory)
 {
-  uint32_t mem_end_page = 0x1000000;
-  nframes = mem_end_page / 0x1000;
-  frames = (uint32_t*)kmalloc(INDEX_FROM_BIT(nframes));
-  kernel_directory = (page_directory_t*)kmalloc_a(sizeof(page_directory_t), 1);
-  current_directory = kernel_directory;
-  int i = 0;
-  while (i < placement_address) {
-    alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
-    i += 0x1000;
-  }
-  load_page_directory(kernel_directory);
+    while (*vaddr < get_kernel_end_addr()) {
+        page_t *page = get_page(*vaddr, kernel_directory);
+        page->present        = PAGE_PRESENT(true);
+        page->rw             = PAGE_RW(true);
+        page->user_superuser = PAGE_SUPERVISOR(false);
+        page->baddress       = PAGE_PHYSICAL_BASE_ADDRESS(*paddr);
+
+        *vaddr += PAGE_SIZE;
+        *paddr += PAGE_SIZE;
+    }
 }
 
-void load_page_directory(page_directory_t *newpd)
+void load_page_directory(page_directory_t *pagedir)
 {
-  current_directory = newpd;
-  asm volatile("mov %0, %%cr3":: "r"(&newpd->tablesPhysical));
+#ifdef DEBUG
+    kprintf("Base Address of Current Page Directory: 0x%h\n", &current_directory->tbaddress);
+    kprintf("Base Address of New Page Directory: 0x%h\n", &pagedir->tbaddress);
+#endif
+  current_directory = pagedir;
+  asm volatile("mov %0, %%cr3":: "r"(&pagedir->tbaddress));
   uint32_t cr0;
   asm volatile("mov %%cr0, %0": "=r"(cr0));
   cr0 |= 0x80000000;
   asm volatile("mov %0, %%cr0":: "r"(cr0));
+#ifdef DEBUG
+    kprintf("Base Address of New Page Directory has been loaded sucessfully!\n");
+#endif
+}
+
+void init_paging()
+{   
+    kprintf("Virtual memory initialization start...\n");
+    kprintf("Kernel physical address space: 0x%h - 0x%h, size: %d bytes\n", get_kernel_start_addr(), get_kernel_end_addr(), get_kernel_size());
+    kernel_directory = (page_directory_t*) kmalloc_base(sizeof(page_directory_t), true);
+    current_directory = kernel_directory;
+  
+#ifdef DEBUG
+    kprintf("Base Address of the Kernel Page Directory: 0x%h\n", kernel_directory);
+#endif
+  
+    virt_addr_t vaddr = 0;
+    phys_addr_t paddr = 0;
+
+    pg_mapkernel(&vaddr, &paddr, kernel_directory);
+
+    load_page_directory(kernel_directory);
+    
+    kprintf("Virtual memory initialization done\n");
+}
+
+page_directory_t *get_current_page_directory()
+{
+    return current_directory;
 }

@@ -16,6 +16,7 @@ extern void init_timer(unsigned int hz);
 
 typedef void (*irq_handler_t) (regs_t *);
 
-#define NULL(type) (type*)0
+
+#define UINT32_T_MAX_VALUE  0x7fffffff
 
 #endif

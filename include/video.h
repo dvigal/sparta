@@ -4,7 +4,7 @@
 #include "types.h"
 
 #define VIDEO_MEMORY		0xB8000
-	      
+
 #define BLACK			0x0
 #define BLUE 			0x1
 #define GREEN			0x2
@@ -22,6 +22,8 @@
 #define LIGTH_BROWN		0xE
 #define WHITE			0xF
 
+#define DEFAULT                 BLACK
+
 #define WIDTH			80
 #define HEIGHT			25
 
@@ -30,6 +32,8 @@
 #define BACKSPACE_SYMBOL	0x08
   
 void write_char(uint8_t c);
+
+void write_text2(string text, uint32_t length);
 
 void write_text(string text);
 

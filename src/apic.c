@@ -58,7 +58,7 @@ void apic_info()
   memset(&buffer, '\0', 64);
   int_to_binary_string(b, &buffer);
   set_text_color(GREEN);
-  write_text("APIC base msr: ");write_text((string)&buffer);write_char('\n');
+  write_text("\nAPIC base msr: ");write_text((string)&buffer);write_char('\n');
   uint8_t apic_global_enable = (b >> 11) & 0x1;
   set_text_color(GREEN);
   write_text("APIC global enable/disable: ");
@@ -69,7 +69,7 @@ void apic_info()
     write_text("disable");
   }
   write_text("\n");
-  
+  set_text_color(LIGTH_GRAY); 
 }
 
 void apic_init()
