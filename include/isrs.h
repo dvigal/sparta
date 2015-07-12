@@ -1,5 +1,5 @@
-#ifndef H_ISRS
-#define H_ISRS
+#ifndef ISRS_H
+#define ISRS_H
 
 #include "system.h"
 

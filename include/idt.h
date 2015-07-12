@@ -1,5 +1,5 @@
-#ifndef H_IDT
-#define H_IDT
+#ifndef IDT_H
+#define IDT_H
 
 struct idt_struct {
   unsigned short base_low;

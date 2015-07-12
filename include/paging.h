@@ -1,5 +1,5 @@
-#ifndef H_PAGING
-#define H_PAGING
+#ifndef PAGING_H
+#define PAGING_H
 
 #include "types.h"
 #include "memory.h"
@@ -16,7 +16,7 @@
 #define PAGE_INDEX(vaddr)     ((vaddr >> 12) & 0x3FF)    
 #define PAGE_PHYSICAL_BASE_ADDRESS(paddr)    (paddr >> 12)
 
-// Page-Table Entry (4-KByte Page). Please see Intel 64 and 32 achitectures software developers manual.
+// Page-Table Entry (4-KByte Page). See Intel 64 and 32 achitectures software developers manual.
 struct page_struct {
     uint32_t present    : 1;
     uint32_t rw         : 1;

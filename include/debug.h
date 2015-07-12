@@ -1,5 +1,5 @@
-#ifndef H_DEBUG
-#define H_DEBUG
+#ifndef DEBUG_H
+#define DEBUG_H
 #include "system.h"
 
 void pretty_print_reg(regs_t * reg);

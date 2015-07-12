@@ -53,27 +53,16 @@ void msr_read(uint32_t reg, int32_t *msr_hi, int32_t *msr_lo)
 
 void apic_info() 
 {
-  int64_t b = rdmsr(IA32_APIC_BASE);
-  uint8_t buffer[64];
-  memset(&buffer, '\0', 64);
-  int_to_binary_string(b, &buffer);
-  set_text_color(GREEN);
-  write_text("\nAPIC base msr: ");write_text((string)&buffer);write_char('\n');
-  uint8_t apic_global_enable = (b >> 11) & 0x1;
-  set_text_color(GREEN);
-  write_text("APIC global enable/disable: ");
-  if (apic_global_enable) {
-    write_text("enable");
-  }
-  else {
-    write_text("disable");
-  }
-  write_text("\n");
-  set_text_color(LIGTH_GRAY); 
+//  int64_t b = rdmsr(IA32_APIC_BASE);
+//  set_text_color(GREEN);
+//  kprintf("\nAPIC base msr: %b\n", b);
+//  uint8_t apic_global_enable = (b >> 11) & 0x1;
+//  set_text_color(GREEN);
+//  kprintf("APIC global enable/disable: %s\n", apic_global_enable ? "enable" : "disable");
+//  set_text_color(LIGTH_GRAY); 
 }
 
 void apic_init()
 {
   apic_info();
-  write_text("------------------------------------\n");
 }

@@ -1,5 +1,5 @@
-#ifndef H_PORT
-#define H_PORT
+#ifndef PORT_H
+#define PORT_H
 
 
 static void port_out_b(unsigned short port, unsigned char data) {

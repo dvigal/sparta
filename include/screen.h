@@ -1,5 +1,5 @@
-#ifndef H_SCREEN
-#define H_SCREEN
+#ifndef SCREEN_H
+#define SCREEN_H
 
 #include "video.h"
 #include "types.h"

@@ -1,5 +1,5 @@
-#ifndef H_CPU_INFO
-#define H_CPU_INFO
+#ifndef CPU_INFO_H
+#define CPU_INFO_H
 
 #include "types.h"
 

@@ -1,5 +1,5 @@
-#ifndef H_APIC
-#define H_APIC
+#ifndef APIC_H
+#define APIC_H
 
 #include "types.h"
 

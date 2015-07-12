@@ -1,5 +1,5 @@
-#ifndef H_IRQ
-#define H_IRQ
+#ifndef IRQ_H
+#define IRQ_H
 
 #include "system.h"
 

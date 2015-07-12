@@ -2,8 +2,7 @@
 
 phys_mblock_t *current_mblock;
 
-void init_mmanager()
+void init_mmanager(phys_addr_t base)
 {
-    current_mblock = (phys_mblock_t*) kmalloc(sizeof(phys_mblock_t));
-    //current_mblock->adderss = get_page();
+    // TODO
 }

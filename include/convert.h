@@ -1,5 +1,5 @@
-#ifndef H_CONVERT
-#define H_CONVERT
+#ifndef CONVERT_H
+#define CONVERT_H
 
 #include "types.h"
 

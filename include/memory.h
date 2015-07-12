@@ -1,10 +1,26 @@
-#ifndef H_MEMORY
-#define H_MEMORY
+#ifndef MEMORY_H
+#define MEMORY_H
 
 #include "types.h"
 
 typedef uint32_t phys_addr_t;
 typedef uint32_t virt_addr_t;
+
+struct phys_memory_block {
+    bool type;
+    phys_addr_t adderss;
+    size_t size;
+    struct phys_memory_block *prev;
+    struct phys_memory_block *next;
+}__attribute__((packed));
+typedef struct phys_memory_block phys_mblock_t;
+
+struct phys_memory_info {
+    size_t memory_size;
+    uint32_t free_page_count;
+    phys_mblock_t *base;
+};
+typedef struct phys_memory_info phys_minfo_t;
 
 phys_addr_t get_kernel_start_addr(void);
 

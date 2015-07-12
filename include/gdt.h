@@ -1,5 +1,5 @@
-#ifndef H_GDT
-#define H_GDT
+#ifndef GDT_H
+#define GDT_H
 
 struct gdt_struct {
   unsigned short limit_low;

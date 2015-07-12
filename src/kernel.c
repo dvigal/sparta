@@ -27,7 +27,7 @@ void init_kernel()
   
   init_paging();
   
-  init_mmanager();
+  init_mmanager(get_kernel_end_addr());
 }
 
 void main()
