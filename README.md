@@ -14,5 +14,6 @@ The first purpose of writing it is education and improve my technical (low-level
     * SMP
     * ???
 
-OS Screenshot 
+OS Screenshot:
+
 ![alt text](http://i.imgur.com/k4erfU1l.jpg "Logo Title Text 1")
