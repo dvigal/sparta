@@ -1,8 +1,8 @@
 #include "mm.h"
 
-phys_mblock_t *current_mblock;
+//static phys_mblock_t 
 
-void init_mmanager(phys_addr_t base)
+void init_mmanager(kinfo_t *kinfo)
 {
-    // TODO
+    kprintf("size of phys_mblock_t - %d\n", sizeof(phys_mblock_t));
 }

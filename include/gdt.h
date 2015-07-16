@@ -1,28 +1,30 @@
 #ifndef GDT_H
 #define GDT_H
 
+#include "types.h"
+
 struct gdt_struct {
-  unsigned short limit_low;
-  unsigned short base_low;
-  unsigned char base_middle;
-  unsigned char access;
-  unsigned char granularity;
-  unsigned char base_high;
+  uint16_t limit_low;
+  uint16_t base_low;
+  uint8_t base_middle;
+  uint8_t access;
+  uint8_t granularity;
+  uint8_t base_high;
 }__attribute__((packed));
 typedef struct gdt_struct gdt_t;
 
 struct gdt_r_struct {
-  unsigned short limit;
-  unsigned int base;
+  uint16_t limit;
+  uint32_t base;
 }__attribute__((packed));
 typedef struct gdt_r_struct gdtr_t;
 
 gdt_t gdt[3];
 gdtr_t gdtr;
 
-void init_gdt();
+void init_gdt(void);
 
-void set_gdt_gate(unsigned int num, unsigned int base, unsigned int limit, unsigned char access, unsigned char gran);
+void set_gdt_gate(uint32_t num, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran);
 
 void load_gdt(gdtr_t *ptr);
 

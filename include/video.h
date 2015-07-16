@@ -37,24 +37,24 @@ void write_text2(string text, uint32_t length);
 
 void write_text(string text);
 
-void clear();
+void clear(void);
 
-uint8_t get_background_color();
+uint8_t get_background_color(void);
 
 void set_background_color(uint8_t color);
 
-uint8_t get_text_color();
+uint8_t get_text_color(void);
 
 void set_text_color(uint8_t color);
 
 void move_cursor(uint8_t x, uint8_t y);
 
-void move_cursor_left();
+void move_cursor_left(void);
 
-void move_cursor_right();
+void move_cursor_right(void);
 
-void move_cursor_up();
+void move_cursor_up(void);
 
-void move_cursor_down();
+void move_cursor_down(void);
 
 #endif

@@ -10,7 +10,7 @@ int32_t lapic_read(uint32_t lapic_reg_name)
 {
   return *((volatile uint32_t *)lapic_addr);
 }
-uint32_t apicid()
+uint32_t apicid(void)
 {	
   //  P6 famili and Pentium processors
   // ----------------------------------
@@ -20,7 +20,7 @@ uint32_t apicid()
   return lapic_read(LAPIC_ID) >> 24;
 }
 
-void lapic_enable() 
+void lapic_enable(void) 
 {
   
 }
@@ -37,7 +37,7 @@ inline void wrmsr(uint32_t msr_id, uint64_t msr_value)
     asm volatile ( "wrmsr" : : "c" (msr_id), "A" (msr_value) );
 }
 
-uint32_t get_apic_base()
+uint32_t get_apic_base(void)
 {
   return ((uint32_t)rdmsr(IA32_APIC_BASE)) & 0xFFFFF000;
 }
@@ -51,7 +51,7 @@ void msr_read(uint32_t reg, int32_t *msr_hi, int32_t *msr_lo)
 }
 
 
-void apic_info() 
+void apic_info(void) 
 {
 //  int64_t b = rdmsr(IA32_APIC_BASE);
 //  set_text_color(GREEN);
@@ -62,7 +62,7 @@ void apic_info()
 //  set_text_color(LIGTH_GRAY); 
 }
 
-void apic_init()
+void apic_init(void)
 {
   apic_info();
 }

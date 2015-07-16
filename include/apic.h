@@ -17,8 +17,8 @@ extern msr_write(uint32_t msr, uint32_t h, uint32_t l);
 
 int32_t lapic_read(uint32_t lapic_reg_name);
 
-uint32_t apicid();
+uint32_t apicid(void);
 
-void apic_init();
+void apic_init(void);
 
 #endif

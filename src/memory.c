@@ -3,25 +3,36 @@
 /*
  * kernel_phys_address_start and kernel_phys_address_end are defined in the link.ld file
  */
+
 extern phys_addr_t kernel_phys_address_start;
 extern phys_addr_t kernel_phys_address_end;
 
-phys_addr_t placement_address = 0x1000 + 0x1000000;
-#define KERNEL_START    ((phys_addr_t) &kernel_phys_address_start)
-#define KERNEL_END      ((phys_addr_t) &kernel_phys_address_end)
-#define KERNEL_SIZE     (KERNEL_END - KERNEL_START)
+//phys_addr_t placement_address = 0x1000 + 0x1000000;
+#define KERNEL_START        ((phys_addr_t) &kernel_phys_address_start)
+#define KERNEL_END          ((phys_addr_t) &kernel_phys_address_end)
+#define KERNEL_SIZE         (KERNEL_END - KERNEL_START)
+#define KERNEL_HEAP_START   (KERNEL_END)
 
-phys_addr_t get_kernel_start_addr()
+phys_addr_t placement_address = 0x1000 + 0x1000000;
+
+static phys_mblock_t free_mblock;
+
+phys_addr_t get_kernel_start_addr(void)
 {
     return KERNEL_START;
 }
 
-phys_addr_t get_kernel_end_addr()
+phys_addr_t get_kernel_end_addr(void)
 {
     return KERNEL_END;
 }
 
-size_t get_kernel_size()
+phys_addr_t get_kernel_heap_addr(void)
+{
+    return KERNEL_HEAP_START;
+}
+
+size_t get_kernel_size(void)
 {
     return KERNEL_SIZE;
 }
@@ -32,7 +43,7 @@ phys_addr_t kmalloc_base(size_t size, bool align)
     placement_address &= 0xFFFFF000;
     placement_address += 0x1000;
   }
-  phys_addr_t addr =  placement_address;
+  phys_addr_t addr = placement_address;
   placement_address += size;
   return addr;
 }

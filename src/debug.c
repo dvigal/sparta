@@ -32,7 +32,7 @@ void pretty_print_reg(regs_t * reg)
   kprintf("USER ESP=%x\n", usersp);
 }
 
-void throw() {
+void throw(void) {
     asm("int $66");
 }
 

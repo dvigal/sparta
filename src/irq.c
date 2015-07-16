@@ -10,7 +10,7 @@ static irq_handler_t irq_handlers[IRQ_HANDLER_TABLE_SIZE] = {0,0,0,0,
 					      0,0,0,0,
 					      0,0,0,0};
 
-void init_pic() {
+void init_pic(void) {
   port_out_b(0x20, 0x11);
   port_out_b(0xA0, 0x11);
 
@@ -27,13 +27,13 @@ void init_pic() {
   port_out_b(0xA1, 0x0);
 }
 
-void init_irq() {
+void init_irq(void) {
     
     init_pic();
     init_timer(20);
 }
 
-void set_irq_handler(unsigned int num, irq_handler_t handler) {
+void set_irq_handler(uint32_t num, irq_handler_t handler) {
   irq_handlers[num] = handler;
 }
 

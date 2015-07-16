@@ -1,7 +1,9 @@
 #include "paging.h"
 
-page_directory_t *kernel_directory = 0;
 page_directory_t *current_directory = 0;
+
+static page_table_t tables[1024] __attribute__((aligned(PAGE_SIZE)));
+static page_directory_t kernel_directory;
 
 page_t *get_page(virt_addr_t vaddr, page_directory_t *dir)
 {
@@ -15,11 +17,11 @@ page_t *get_page(virt_addr_t vaddr, page_directory_t *dir)
     if (dir->table[table_idx]) {
         return &dir->table[table_idx]->page[page_idx];
     } else {
-        phys_addr_t page_table_addr = kmalloc_base(sizeof(page_table_t), true);
+        phys_addr_t page_table_addr = &tables[table_idx];
 #ifdef DEBUG
     kprintf("Page Table Address: 0x%h\n", page_table_addr);
-#endif
-        dir->table[table_idx] = (page_table_t*) page_table_addr;
+#endif  
+        dir->table[table_idx] = &tables[table_idx];
         dir->tbaddress[table_idx] = page_table_addr | PAGE_PRESENT_RW_USER;
         return &dir->table[table_idx]->page[page_idx];
     }
@@ -27,7 +29,7 @@ page_t *get_page(virt_addr_t vaddr, page_directory_t *dir)
 }
 
 void pg_mapkernel(virt_addr_t *vaddr, phys_addr_t *paddr, page_directory_t *kernel_directory)
-{
+{   
     while (*vaddr < get_kernel_end_addr()) {
         page_t *page = get_page(*vaddr, kernel_directory);
         page->present        = PAGE_PRESENT(true);
@@ -57,12 +59,11 @@ void load_page_directory(page_directory_t *pagedir)
 #endif
 }
 
-void init_paging()
+void init_paging(kinfo_t *kinfo)
 {   
     kprintf("Virtual memory initialization start...\n");
-    kprintf("Kernel physical address space: 0x%h - 0x%h, size: %d bytes\n", get_kernel_start_addr(), get_kernel_end_addr(), get_kernel_size());
-    kernel_directory = (page_directory_t*) kmalloc_base(sizeof(page_directory_t), true);
-    current_directory = kernel_directory;
+    kprintf("Kernel physical address space: 0x%h - 0x%h, size: %d bytes\n", kinfo->kernel_start, kinfo->kernel_end, kinfo->kernel_len);
+    current_directory = &kernel_directory;
   
 #ifdef DEBUG
     kprintf("Base Address of the Kernel Page Directory: 0x%h\n", kernel_directory);
@@ -71,9 +72,9 @@ void init_paging()
     virt_addr_t vaddr = 0;
     phys_addr_t paddr = 0;
 
-    pg_mapkernel(&vaddr, &paddr, kernel_directory);
+    pg_mapkernel(&vaddr, &paddr, &kernel_directory);
 
-    load_page_directory(kernel_directory);
+    load_page_directory(&kernel_directory);
     
     kprintf("Virtual memory initialization done\n");
 }

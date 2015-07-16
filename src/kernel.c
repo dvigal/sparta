@@ -12,28 +12,50 @@
 #include "debug.h"
 #include "mm.h"
 
-void init_kernel() 
+extern phys_addr_t kernel_phys_address_start;
+extern phys_addr_t kernel_phys_address_end;
+
+//phys_addr_t placement_address = 0x1000 + 0x1000000;
+#define KERNEL_START        ((phys_addr_t) &kernel_phys_address_start)
+#define KERNEL_END          ((phys_addr_t) &kernel_phys_address_end)
+#define KERNEL_SIZE         (KERNEL_END - KERNEL_START)
+#define KERNEL_HEAP_START   (KERNEL_END)
+
+kinfo_t kinfo;
+
+void pre_init(void)
 {
-  init_gdt();
-  kprintf("GDT...\n");
-  init_idt();
-  kprintf("IDT...\n");
-  init_isrs();
-  kprintf("ISRS...\n");
-  init_irq();
-  kprintf("IRQ...\n");
-    
-  apic_init();
-  
-  init_paging();
-  
-  init_mmanager(get_kernel_end_addr());
+    kinfo.kernel_start = KERNEL_START;
+    kinfo.kernel_end   = KERNEL_END;
+    kinfo.kernel_len   = KERNEL_SIZE;
 }
 
-void main()
-{   
+void main(void)
+{       
+    pre_init();
+        
     clear();
-    init_kernel();
+    kprintf("    _____                  _        \n");
+    kprintf("   /  ___|                | |       \n"); 
+    kprintf("   \ `--. _ __   __ _ _ __| |_ __ _ \n");  
+    kprintf("    `--. \ '_ \ / _` | '__| __/ _` |\n"); 
+    kprintf("   /\__/ / |_) | (_| | |  | || (_| |\n"); 
+    kprintf("   \____/| .__/ \__,_|_|   \__\__,_|\n");  
+    kprintf("         | |\n");                                       
+    kprintf("         |_|\n\n\n");                                       
+    
+    init_gdt();
+    kprintf("GDT...\n");
+    init_idt();
+    kprintf("IDT...\n");
+    init_isrs();
+    kprintf("ISRS...\n");
+    init_irq();
+    kprintf("IRQ...\n");
+    apic_init();
+
+    init_paging(&kinfo);
+    init_mmanager(&kinfo);
     
     asm("sti");
 //    vscreen_t *vscreen = init_vscreen();

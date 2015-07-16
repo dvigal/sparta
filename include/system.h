@@ -8,11 +8,19 @@ struct regs_struct {
 }__attribute__((packed));
 typedef struct regs_struct regs_t;
 
-extern void init_gdt();
-extern void init_idt();
-extern void init_isrs();
-extern void init_irq();
-extern void init_timer(unsigned int hz);
+struct kernel_info {
+    phys_addr_t kernel_start;
+    phys_addr_t kernel_end;
+    phys_addr_t kernel_len;
+    phys_addr_t kernel_pde_addr;
+};
+typedef struct kernel_info kinfo_t;
+
+extern void init_gdt(void);
+extern void init_idt(void);
+extern void init_isrs(void);
+extern void init_irq(void);
+extern void init_timer(uint32_t hz);
 
 typedef void (*irq_handler_t) (regs_t *);
 

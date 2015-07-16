@@ -1,10 +1,12 @@
 #ifndef PAGING_H
 #define PAGING_H
 
+#include "system.h"
 #include "types.h"
 #include "memory.h"
 
-#define PAGE_SIZE   0x1000 // 4-KByte Page
+#define PAGE_SIZE       0x1000 // 4-KByte Page
+#define PAGE_TABLE_SIZE 0x400  // 1024 entries
 
 // Page directory entries flags. Intel 64 and 32 architectures software developers manual, volume 3a, part 1, pp 3-30..3-33.
 #define PAGE_PRESENT(v)            ((true) ? (0x1) : (0x0))
@@ -44,7 +46,7 @@ struct page_directory {
 }__attribute__((packed));
 typedef struct page_directory page_directory_t;
 
-void init_paging();
+void init_paging(kinfo_t *kinfo);
 
 /*
  * The phisical address of the passed page directory
@@ -56,6 +58,6 @@ page_t *get_page(virt_addr_t vaddr, page_directory_t *dir);
 
 page_directory_t *get_current_page_directory();
 
-void tmp_mappage();
+void tmp_mappage(void);
 
 #endif

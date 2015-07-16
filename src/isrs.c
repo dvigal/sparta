@@ -5,7 +5,7 @@
 #include "video.h"
 #include "debug.h"
 
-const char *exception_messages[] = {
+const uint8_t *exception_messages[] = {
   "\nDividing by Zero Error Encoutered!    \n",
   "Not Implemented",
   "Not Implemented",
@@ -40,11 +40,11 @@ const char *exception_messages[] = {
   "Reserved"
 };
 
-const char *software_general_exception_message[] = {
+const uint8_t *software_general_exception_message[] = {
     "SOFTWARE-GENERAL EXCEPTION"
 };
 
-void init_isrs() {
+void init_isrs(void) {
   set_idt_gate(0,  (uint32_t)  isr0, 0x08, 0x8E);
   set_idt_gate(3,  (uint32_t)  isr3, 0x08, 0x8E);
   set_idt_gate(8,  (uint32_t)  isr8, 0x08, 0x8E);

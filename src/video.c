@@ -51,7 +51,7 @@ void write_text(string text)
     write_text2a(text, -1);
 }
 
-void clear() 
+void clear(void) 
 {
   uint16_t blank = ' ' | ((BLACK << 4)| (WHITE & 0xF) << 8);
   uint16_t *location = video_memory;
@@ -62,7 +62,7 @@ void clear()
   move_cursor(0, 0);
 }
 
-uint8_t get_background_color()
+uint8_t get_background_color(void)
 {
   return background_color;
 }
@@ -72,7 +72,7 @@ void set_background_color(uint8_t color)
   background_color = color;
 }
 
-uint8_t get_text_color()
+uint8_t get_text_color(void)
 {
   return text_color;
 }
@@ -96,22 +96,22 @@ void move_cursor(uint8_t x, uint8_t y)
   port_out_b(0x3D5, position);
 }
 
-void move_cursor_left()
+void move_cursor_left(void)
 {
   move_cursor(current_x - 1, current_y);
 }
 
-void move_cursor_right()
+void move_cursor_right(void)
 {
   move_cursor(current_x + 1, current_y);
 }
 
-void move_cursor_up()
+void move_cursor_up(void)
 {
   move_cursor(current_x, current_y - 1);
 }
 
-void move_cursor_down()
+void move_cursor_down(void)
 {
   move_cursor(current_x, current_y + 1);
 }

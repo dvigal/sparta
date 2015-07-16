@@ -10,7 +10,7 @@ static void timer(regs_t *reg)
   ticks++;
 }
 
-void init_timer(unsigned int hz)
+void init_timer(uint32_t hz)
 {
     uint32_t divisor = 1193180 / hz;
     
