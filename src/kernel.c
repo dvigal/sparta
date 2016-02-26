@@ -36,13 +36,13 @@ void main(void)
         
     clear();
     kprintf("    _____                  _        \n");
-    kprintf("   /  ___|                | |       \n"); 
-    kprintf("   \ `--. _ __   __ _ _ __| |_ __ _ \n");  
-    kprintf("    `--. \ '_ \ / _` | '__| __/ _` |\n"); 
-    kprintf("   /\__/ / |_) | (_| | |  | || (_| |\n"); 
-    kprintf("   \____/| .__/ \__,_|_|   \__\__,_|\n");  
-    kprintf("         | |\n");                                       
-    kprintf("         |_|\n\n\n");                                       
+    kprintf("   /  ___|                | |       \n");
+    kprintf("   \\ `--. _ __   __ _ _ __| |_ __ _ \n");
+    kprintf("    `--. \\ '_ \\ / _` | '__| __/ _` |\n");
+    kprintf("   /\\__/ / |_) | (_| | |  | || (_| |\n");
+    kprintf("   \\____/| .__/ \\__,_|_|   \\__\\__,_|\n");
+    kprintf("         | |\n");
+    kprintf("         |_|\n\n\n");
     
     init_gdt();
     kprintf("GDT...\n");
